@@ -22,6 +22,11 @@ const userController =
             path: 'thoughts',
             select: '-__v'
         })
+        .populate(
+        {
+            path: 'friends',
+            select: '-__v'
+        })
         .select('-__v')
         .then(dbUserData =>
         {
@@ -64,6 +69,7 @@ const userController =
 
     deleteUser({ params }, res)
     {
+        console.log('delete user');
         User.findOneAndDelete({ _id: params.id })
         .then(dbUserData =>
         {
@@ -77,7 +83,7 @@ const userController =
         .catch(err => res.status(400).json(err));
     },
 
-    addFriend({ params, body }, res)
+    addFriend({ params }, res)
     {
         User.findOneAndUpdate(
         { 
@@ -86,7 +92,10 @@ const userController =
         {
             $push:
             {
-                friends: body
+                friends:
+                {
+                    _id: params.friendId
+                }
             }
         },
         {

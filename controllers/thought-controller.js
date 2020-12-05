@@ -14,7 +14,7 @@ const thoughtController =
         });
     },
 
-    getThoughtById(req, res)
+    getThoughtById({ params }, res)
     {
         Thought.findOne({ _id: params.id })
         .select('-__v')
@@ -34,14 +34,14 @@ const thoughtController =
         });
     },
 
-    createThought({ body }, res)
+    createThought({ body, params }, res)
     {
         Thought.create(body)
         .then(({ _id }) => 
         {
             return User.findOneAndUpdate(
             {
-                _id: params.userId
+                _id: params.id
             },
             {
                 $push:
@@ -62,7 +62,11 @@ const thoughtController =
             }
             res.json(dbThoughtData);
         })
-        .catch(err => res.status(400).json(err));
+        .catch(err => 
+        {
+            console.log(err);
+            res.status(400).json(err);
+        });
     },
 
     updateThought({ params, body }, res)
@@ -91,7 +95,7 @@ const thoughtController =
             }
             return User.findOneAndUpdate(
             {
-                _id: params.thoughtId
+                _id: params.userId
             },
             {
                 $pull:
@@ -154,7 +158,7 @@ const thoughtController =
             {
                 reactions:
                 {
-                    replyId: params.replyId
+                    reactionId: params.reactionId
                 }
             }
         },
